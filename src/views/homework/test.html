@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>注册页面</title>
+    <style>
+        body {
+            font-family: system-ui;;
+            background-color: #f2f2f2;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 0;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 5% auto 5%;
+            padding: 3%;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .input-container label {
+            display: block;
+            width: 100%;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .s1 {
+            font-weight: bold;
+        }
+
+        .input-container input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        select,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+        <form>
+            <h1>注册页面</h1>
+            <div class="input-container">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required><br><br>
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required><br><br>
+                <label for="confirm-password">确认密码:</label>
+                <input type="password" id="confirm-password" name="confirm-password" required><br><br>
+                <label for="id-card">学号:</label>
+                <input type="text" id="id-card" name="id-card" required><br><br>
+            </div>
+            <label class="s1" for="gender">性别</label>
+            <select id="gender" name="gender">
+                <option value="male">男</option>
+                <option value="female">女</option>
+            </select>
+            <br><br>
+            <label class="s1">兴趣爱好</label><br>
+            <input type="checkbox" value="interest1">
+            <label for="interest1">羽毛球</label><br>
+            <input type="checkbox" value="interest2">
+            <label for="interest2">剪纸</label><br>
+            <input type="checkbox" value="interest3">
+            <label for="interest3">滑雪</label><br><br>
+            <label>华为官网</label>
+            <a href="http://www.huawei.com" name="site">华为官网</a><br><br>
+            <label class="s1" for="text">备注:</label><br>
+            <textarea id="text" name=text" rows="4" cols="50"></textarea><br><br>
+            <input type="submit" value="提交">
+        </form>
+</body>
+</html>

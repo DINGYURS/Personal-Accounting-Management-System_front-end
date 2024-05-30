@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实验六</title>
+  <script>
+    function check() {
+      let username = document.querySelector('.user').value
+      let password = document.querySelector('.password').value
+      let confirmPassword = document.querySelector('.repassword').value
+      let idNumber = document.querySelector('.id').value
+
+      let age = calculateAge(idNumber)
+
+      if (!isValidUsername(username)) {
+        alert('用户名不合法')
+      } else if (!isValidPassword(password)) {
+        alert('密码不合法')
+      } else if (password !== confirmPassword) {
+        alert('密码不一致')
+      } else if (!isValidIdNumber(idNumber)) {
+        alert('身份证不合法')
+      } else if (age >= 18) {
+        alert('无法注册')
+      } else if (!document.querySelector('input[type="checkbox"]').checked) {
+        alert('请勾选协议')
+      } else {
+        const info = {
+          username: username,
+          password: password,
+          idNumber: idNumber,
+          age: age
+        }
+        const str = JSON.stringify(info)
+        console.log(str)
+      }
+
+      function isValidUsername(username) {
+        const regex = /^[A-Za-z0-9_-]{6,10}$/
+        return regex.test(username)
+      }
+
+      function isValidPassword(password) {
+        const regex = /^[A-Za-z0-9_-]{6,10}$/
+        return regex.test(password)
+      }
+
+      function isValidIdNumber(idNumber) {
+        const regex = /^[1-9]\d{5}(19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+        return regex.test(idNumber)
+      }
+
+      function calculateAge(idNumber) {
+        let birthYear = parseInt(idNumber.slice(6, 10))
+        let birthMonth = parseInt(idNumber.slice(10, 12))
+        let birthDay = parseInt(idNumber.slice(12, 14))
+
+        let currentDate = new Date()
+        let currentYear = currentDate.getFullYear()
+        let currentMonth = currentDate.getMonth() + 1
+        let currentDay = currentDate.getDate()
+
+        let age = currentYear - birthYear
+
+        if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
+          age--
+        }
+
+        return age
+      }
+    }
+  </script>
+</head>
+<body>
+用户名：<input type="text" class="user"><br>
+密码：<input type="password" class="password"><br>
+确认密码：<input type="password" class="repassword"><br>
+证件号码：<input type="text" class="id"><br>
+<input type="checkbox">我已阅读并同意相关条款<br>
+<button onclick="check()">注册</button>
+</body>
+</html>

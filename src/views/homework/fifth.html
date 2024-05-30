@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>计算一元二次方程的解</title>
+</head>
+<body>
+
+<script>
+  window.onload = function() {
+    let a = parseFloat(prompt('请输入a的值'))
+    let b = parseFloat(prompt('请输入b的值'))
+    let c = parseFloat(prompt('请输入c的值'))
+
+    if (isNaN(a) || isNaN(b) || isNaN(c)) {
+      alert('输入错误')
+    } else if (a === 0) {
+      if (b === 0) {
+        alert('输入错误')
+      } else {
+        let root = -c / b
+        alert(`x=${root}`)
+      }
+    } else {
+      let number = b * b - 4 * a * c
+
+      if (number > 0) {
+        let ans1 = (-b + Math.sqrt(number)) / (2 * a)
+        let ans2 = (-b - Math.sqrt(number)) / (2 * a)
+        alert(`x1=${ans1}, x2=${ans2}`)
+      } else if (number === 0) {
+        let ans = -b / (2 * a)
+        alert(`x1=x2=${ans}`)
+      } else {
+        alert('无实根')
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

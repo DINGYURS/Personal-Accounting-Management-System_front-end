@@ -1,0 +1,30 @@
+{
+  "id": "4423651",
+  "name": "原生搭建",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2301640",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "1278123",
+      "name": "图片",
+      "font_class": "tupian",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "1363827",
+      "name": "home",
+      "font_class": "home",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}
