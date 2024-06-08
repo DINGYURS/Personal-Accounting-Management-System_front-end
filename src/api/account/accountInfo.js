@@ -2,15 +2,24 @@ import request from '@/utils/request.js'
 import { useUserStore } from '@/stores/user.js'
 
 // 分页查询收支信息
-export const pageQueryAccountInfo = (page, pageSize, tag, type) => {
+export const pageQueryAccountInfo = (
+  page,
+  pageSize,
+  tag,
+  type,
+  startDate,
+  endDate
+) => {
   const userStore = useUserStore()
-  console.log(page, pageSize, tag, type)
+  console.log('queryForm:', page, pageSize, tag, type, startDate, endDate)
   return request.get('/api/info', {
     params: {
       page,
       pageSize,
       tag,
-      type
+      type,
+      startDate,
+      endDate
     },
     headers: {
       token: userStore.token

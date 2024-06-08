@@ -2,16 +2,16 @@
   <!-- 顶部表单 -->
   <div style="width: 100%">
     <el-form :inline="true" :model="queryForm" class="query-Form">
-      <el-form-item label="标签" class="query-Form-item">
+      <el-form-item class="query-Form-item" label="标签">
         <el-input
           v-model="queryForm.tag"
-          placeholder="按标签名字查询"
           clearable
+          placeholder="按标签名字查询"
         />
       </el-form-item>
-      <el-form-item label="类型" class="query-Form-item">
+      <el-form-item class="query-Form-item" label="类型">
         <el-select
-          v-model="queryForm.gender"
+          v-model="queryForm.type"
           clearable
           placeholder="按金额类型查询"
         >
@@ -19,25 +19,39 @@
           <el-option label="收入" value="2" />
         </el-select>
       </el-form-item>
+      <el-form-item class="query-Form-item" label="时间">
+        <el-date-picker
+          v-model="queryForm.selectedDate"
+          end-placeholder="结束时间"
+          format="YYYY/MM/DD"
+          range-separator="-"
+          size="default"
+          start-placeholder="开始时间"
+          type="daterange"
+          unlink-panels
+          value-format="YYYY-MM-DD"
+        />
+      </el-form-item>
       <!-- TODO:按照金额区间查询 -->
+      <!-- TODO:按照时间区间查询 -->
       <el-form-item class="query-Form-item">
-        <el-button type="primary" @click="handleCurrentChange">查询 </el-button>
+        <el-button type="primary" @click="handleCurrentChange">查询</el-button>
       </el-form-item>
       <el-form-item class="query-Form-item">
-        <el-button type="primary" @click="insertButton"> 新增 </el-button>
+        <el-button type="primary" @click="insertButton"> 新增</el-button>
       </el-form-item>
       <el-form-item class="query-Form-item">
-        <el-button type="danger" @click="insertFormVisible = true">
-          批量删除
-        </el-button>
+        <el-button type="danger" @click="batchDelete"> 批量删除</el-button>
       </el-form-item>
     </el-form>
   </div>
   <!-- 新增数据对话框 -->
   <el-dialog v-model="insertFormVisible" title="新增数据" width="500px">
     <el-form
+      ref="formRef"
       :label-position="labelPosition"
       :model="form"
+      :rules="rules"
       label-width="60px"
       show-message
       size="large"
@@ -45,7 +59,7 @@
       style="max-width: 460px; font-weight: bold"
     >
       <el-form-item label="标签">
-        <el-select v-model="labelOption" placeholder="选择标签" size="large">
+        <el-select v-model="form.tag" placeholder="选择标签" size="large">
           <el-option
             v-for="item in labelOptions"
             :key="item.id"
@@ -81,8 +95,10 @@
   <!-- 编辑数据对话框 -->
   <el-dialog v-model="editFormVisible" title="编辑数据" width="500px">
     <el-form
+      ref="formRef"
       :label-position="labelPosition"
       :model="form"
+      :rules="rules"
       label-width="60px"
       show-message
       size="large"
@@ -90,7 +106,7 @@
       style="max-width: 460px; font-weight: bold"
     >
       <el-form-item label="标签">
-        <el-select v-model="labelOption" placeholder="选择标签" size="large">
+        <el-select v-model="form.tag" placeholder="选择标签" size="large">
           <el-option
             v-for="item in labelOptions"
             :key="item.id"
@@ -126,32 +142,32 @@
   <!-- 表单数据展示 -->
   <div style="width: 100%">
     <el-table
+      v-loading="loading"
       :data="tableData"
-      height="auto"
+      border
       class="el-table"
       @selection-change="handleSelectionChange"
-      border
     >
       <el-table-column type="selection" />
-      <el-table-column label="序号" align="center">
+      <el-table-column align="center" label="序号">
         <template #default="{ $index }">
           {{ adjustedIndex($index) }}
         </template>
       </el-table-column>
-      <el-table-column label="标签" prop="tag" align="center" />
-      <el-table-column label="类型" prop="type" align="center">
+      <el-table-column align="center" label="标签" prop="tag" />
+      <el-table-column align="center" label="类型" prop="type">
         <template #default="{ row }">
-          <el-tag type="danger" v-if="row.type === 1">支出</el-tag>
-          <el-tag type="success" v-else>收入</el-tag>
+          <el-tag v-if="row.type === 1" type="danger">支出</el-tag>
+          <el-tag v-else type="success">收入</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="金额" prop="price" align="center" />
-      <el-table-column label="备注" prop="note" align="center" />
-      <el-table-column label="创建时间" prop="createTime" align="center" />
-      <el-table-column label="操作" fixed="right" align="center">
+      <el-table-column align="center" label="金额" prop="price" />
+      <el-table-column align="center" label="备注" prop="note" />
+      <el-table-column align="center" label="创建时间" prop="createTime" />
+      <el-table-column align="center" fixed="right" label="操作">
         <template #default="{ row }">
           <el-button type="primary" @click="editButton(row)">编辑</el-button>
-          <el-button type="danger" @click="deleteButton(row)">删除 </el-button>
+          <el-button type="danger" @click="deleteButton(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -187,11 +203,13 @@ const labelPosition = ref('left')
 const insertFormVisible = ref(false)
 const editFormVisible = ref(false)
 const tableData = ref([])
-const labelOption = ref('')
 const labelOptions = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+const loading = ref(true)
+const ids = ref([])
+const formRef = ref(null)
 
 const form = reactive({
   id: '',
@@ -203,42 +221,22 @@ const form = reactive({
 
 const queryForm = reactive({
   tag: '',
-  type: ''
+  type: '',
+  selectedDate: []
 })
+
+const priceRule = (rule, value, callback) => {
+  const reg = /^[0-9]*$/
+  if (!reg.test(value)) {
+    callback(new Error('请输入数字'))
+  } else {
+    callback()
+  }
+}
 
 const rules = reactive({
-  username: [{ validator: usernameRule, trigger: 'blur' }],
-  LabelId: [{ validator: LabelIdRule, trigger: 'blur' }],
-  motto: [{ validator: mottoRule, trigger: 'blur' }]
+  price: [{ validator: priceRule, trigger: 'blur' }]
 })
-
-function usernameRule(rule, value, callback) {
-  if (value.length > 6) {
-    callback(new Error('用户名不得超过6个字符'))
-  } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-    callback(new Error('用户名不能包含特殊字符'))
-  } else {
-    callback()
-  }
-}
-
-function LabelIdRule(rule, value, callback) {
-  if (value.length !== 10) {
-    callback(new Error('学号必须为10位数字'))
-  } else if (!/^[0-9]+$/.test(value)) {
-    callback(new Error('学号只能是数字'))
-  } else {
-    callback()
-  }
-}
-
-function mottoRule(rule, value, callback) {
-  if (value.length > 30) {
-    callback(new Error('留言内容不得超过30个字符'))
-  } else {
-    callback()
-  }
-}
 
 // 计算表格序号
 const adjustedIndex = computed(() => {
@@ -254,7 +252,6 @@ const insertButton = () => {
   form.type = ''
   form.price = ''
   form.note = ''
-  labelOption.value = ''
   insertFormVisible.value = true
 }
 
@@ -266,19 +263,39 @@ const editButton = (row) => {
 
 // “删除”按钮
 const deleteButton = (row) => {
-  ElMessageBox.confirm('确定删除该学生信息吗？', '警告', {
+  ElMessageBox.confirm('确定删除该收支信息吗？', '警告', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    handleDeleteLabel(row)
+    ids.value.push(row.id)
+    handleDeleteLabel()
+  })
+}
+const batchDelete = () => {
+  ElMessageBox.confirm('确定删除这些收支信息吗？', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    handleDeleteLabel()
   })
 }
 
-// 新增标签
+// 新增收支信息
 async function submitInsert() {
   try {
-    form.tag = labelOption.value
+    const valid = await new Promise((resolve) => {
+      formRef.value.validate((valid) => {
+        resolve(valid)
+      })
+    })
+
+    if (!valid) {
+      ElMessage.error('收支金额只能为数字')
+      return
+    }
+
     await insertAccountInfo(form)
     await handleCurrentChange(currentPage.value)
     insertFormVisible.value = false
@@ -288,10 +305,20 @@ async function submitInsert() {
   }
 }
 
-// 编辑标签
+// 编辑收支信息
 async function submitEdit() {
   try {
-    form.tag = labelOption.value
+    const valid = await new Promise((resolve) => {
+      formRef.value.validate((valid) => {
+        resolve(valid)
+      })
+    })
+
+    if (!valid) {
+      ElMessage.error('收支金额只能为数字')
+      return
+    }
+
     await editAccountInfo(form)
     await handleCurrentChange(currentPage.value)
     editFormVisible.value = false
@@ -302,16 +329,15 @@ async function submitEdit() {
 }
 
 const handleSelectionChange = (selectedRows) => {
-  // 使用 map 方法从每个选中的行中提取 id 属性
-  const ids = selectedRows.map((row) => row.id)
-  console.log('Selected IDs:', ids)
-  // 这里 ids 将是一个包含所有选中行 id 的数组
+  // 从每个选中的行中提取 id 属性
+  ids.value = selectedRows.map((row) => row.id)
+  console.log('Selected IDs:', ids.value)
 }
 
 // 处理删除标签
-async function handleDeleteLabel(row) {
+async function handleDeleteLabel() {
   try {
-    await deleteAccountInfo(row.id)
+    await deleteAccountInfo(ids.value)
     await handleCurrentChange(currentPage.value)
     ElMessage.success('删除成功')
   } catch (error) {
@@ -326,11 +352,13 @@ async function handleCurrentChange() {
       currentPage.value,
       pageSize.value,
       queryForm.tag,
-      queryForm.type
+      queryForm.type,
+      queryForm.selectedDate[0],
+      queryForm.selectedDate[1]
     )
-    console.log('response:', response)
     tableData.value = response.data.data.rows
     total.value = response.data.data.total
+    loading.value = false
   } catch (error) {
     console.error('Failed to fetch AccountInfo data:', error)
   }
@@ -341,7 +369,6 @@ async function pageQueryLabelInfo() {
   try {
     const response = await getAllLabel()
     labelOptions.value = response.data.data
-    console.log(labelOptions.value)
   } catch (error) {
     console.error('Failed to get all Label data:', error)
   }
@@ -350,7 +377,6 @@ async function pageQueryLabelInfo() {
 // 回显数据
 async function handleEchoData(row) {
   try {
-    // const response = await echoLabelData(row.id)
     form.id = row.id
     form.tag = row.tag
     form.type = row.type

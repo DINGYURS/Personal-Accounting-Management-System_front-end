@@ -10,8 +10,8 @@
           v-model="selected_date"
           :options="options"
           :props="props"
-          @change="handleChange"
           size="default"
+          @change="handleChange"
         />
       </el-col>
       <el-col :span="8">
@@ -471,7 +471,7 @@ onMounted(() => {
 
 <style scoped>
 .top {
-  height: 150px;
+  height: 15vh;
 }
 
 .year {
@@ -479,30 +479,35 @@ onMounted(() => {
   font-size: 40px;
   border-bottom: 2px solid;
 }
+
 .month {
   font-weight: bolder;
   font-size: 40px;
 }
 
 .middle {
+  height: 40vh;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bolder;
   font-size: 30px;
 }
+
 .payTrend {
   width: 98%;
-  height: 400px;
+  height: 100%;
   background-color: white;
   border-radius: 10px;
 }
+
 .payTrendGraphic {
   width: 100%;
-  height: 350px;
+  height: 90%;
 }
 
 .bottom {
+  height: 40vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -510,9 +515,10 @@ onMounted(() => {
   font-size: 30px;
   margin-top: 20px;
 }
+
 .bottom_inside {
   width: 98%;
-  height: 400px;
+  height: 100%;
   background-color: white;
   border-radius: 10px;
   display: flex;
@@ -528,9 +534,11 @@ onMounted(() => {
 .paySortGraphic {
   height: 90%;
 }
+
 .categoryRankGraphic {
   height: 80%;
 }
+
 .expenseRankGraphic {
   height: 80%;
 }

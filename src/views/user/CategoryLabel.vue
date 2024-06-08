@@ -81,7 +81,11 @@
           {{ adjustedIndex($index) }}
         </template>
       </el-table-column>
-      <el-table-column label="标签" prop="tag" align="center" />
+      <el-table-column label="标签" prop="tag" align="center">
+        <template #default="{ row }">
+          <el-tag type="primary">{{ row.tag }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" fixed="right" align="center">
         <template #default="{ row }">
           <el-button type="primary" @click="editButton(row)">编辑</el-button>
@@ -121,7 +125,7 @@ const insertFormVisible = ref(false)
 const editFormVisible = ref(false)
 const tableData = ref([])
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(10)
 const total = ref(0)
 // const ruleFormRef = ref()
 

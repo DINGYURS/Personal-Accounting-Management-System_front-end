@@ -7,19 +7,23 @@ const router = createRouter({
     {
       path: '/login',
       component: () => import('@/views/login/LoginPage.vue')
-    }, // 登录页面
+    },
     {
       path: '/',
       component: () => import('@/views/layout/LayoutPage.vue'),
       redirect: '/user',
       children: [
         {
+          path: '/center',
+          component: () => import('@/views/homework/login/Center.vue')
+        },
+        {
           path: '/home',
           component: () => import('@/views/layout/Home.vue')
         },
         {
           path: '/homework',
-          component: () => import('@/views/homework/ten.vue')
+          component: () => import('@/views/homework/13th/App.vue')
         },
         {
           path: '/layout',
@@ -58,6 +62,14 @@ const router = createRouter({
             {
               path: '/user/screen',
               component: () => import('@/views/user/DataDisplay.vue')
+            },
+            {
+              path: '/user/label',
+              component: () => import('@/views/user/CategoryLabel.vue')
+            },
+            {
+              path: '/user/photo',
+              component: () => import('@/views/user/Photo.vue')
             }
           ]
         },

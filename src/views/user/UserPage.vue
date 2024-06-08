@@ -6,33 +6,39 @@
         ref="ruleFormRef"
         background-color="#e0e5df"
         class="el-menu-vertical-demo"
-        default-active="1"
+        default-active="/user/info"
         style="border-width: 0"
         @close="handleClose"
         @open="handleOpen"
         @select="handleSelect"
       >
-        <el-menu-item index="1">
+        <el-menu-item index="/user/screen">
           <el-icon>
             <DataLine />
           </el-icon>
           <span>数据大屏</span>
         </el-menu-item>
-        <el-sub-menu index="2">
+        <el-sub-menu index="/user">
           <template #title>
             <el-icon>
               <Notebook />
             </el-icon>
             <span>记账管理</span>
           </template>
-          <el-menu-item index="2-1"
-            ><el-icon> <CollectionTag /> </el-icon>分类标签</el-menu-item
-          >
-          <el-menu-item index="2-2"
-            ><el-icon> <Document /> </el-icon>记账信息</el-menu-item
-          >
+          <el-menu-item index="/user/label">
+            <el-icon>
+              <CollectionTag />
+            </el-icon>
+            分类标签
+          </el-menu-item>
+          <el-menu-item index="/user/info">
+            <el-icon>
+              <Document />
+            </el-icon>
+            记账信息
+          </el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="3">
+        <el-menu-item index="/user/photo">
           <el-icon>
             <Picture />
           </el-icon>
@@ -41,20 +47,14 @@
       </el-menu>
     </el-aside>
     <el-main class="el-main">
-      <DataDisplay v-if="selectedMenuIndex === '1'" />
-      <CategoryLabel v-if="selectedMenuIndex === '2-1'" />
-      <AccountInfo v-if="selectedMenuIndex === '2-2'" />
-      <Photo v-if="selectedMenuIndex === '3'" />
+      <routerView></routerView>
     </el-main>
   </el-container>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import AccountInfo from './AccountInfo.vue'
-import DataDisplay from './DataDisplay.vue'
-import CategoryLabel from './CategoryLabel.vue'
-import Photo from './Photo.vue'
+import { onMounted, ref } from 'vue'
+import router from '@/router'
 import {
   DataLine,
   Notebook,
@@ -63,7 +63,7 @@ import {
   CollectionTag
 } from '@element-plus/icons-vue'
 
-const selectedMenuIndex = ref('1')
+const selectedMenuIndex = ref('/user/info')
 
 const handleOpen = (index, indexPath) => {
   console.log(index, indexPath)
@@ -72,9 +72,12 @@ const handleClose = (index, indexPath) => {
   console.log(index, indexPath)
 }
 const handleSelect = (index) => {
-  console.log('当前导航位置:', index)
+  router.push(index)
   selectedMenuIndex.value = index
 }
+onMounted(() => {
+  router.push(selectedMenuIndex.value)
+})
 </script>
 <style scoped>
 .el-main {
